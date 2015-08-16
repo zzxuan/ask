@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>上传问题</title>
+<script type="text/javascript" charset="utf-8" src="../jscripts/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../jscripts/ueditor/ueditor.all.min.js"> </script>
+    <!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
+    <!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
+    <script type="text/javascript" charset="utf-8" src="../jscripts/ueditor/lang/zh-cn/zh-cn.js"></script>
+
+<script type="text/javascript">
+ var ue = UE.getEditor('editor',{
+            //这里可以选择自己需要的工具按钮名称,此处仅选择如下五个
+            toolbars:[['FullScreen', 'Undo', 'Redo','Bold','test', 'simpleupload']],
+            //focus时自动清空初始化时的内容
+            //autoClearinitialContent:true,
+            //关闭字数统计
+            wordCount:false,
+            //关闭elementPath
+            //elementPathEnabled:false,
+            //默认的编辑区域高度
+            //initialFrameHeight:300,
+            //更多其他参数，请参考ueditor.config.js中的配置项
+            //serverUrl: '/server/ueditor/controller.php'
+        });
+</script>     
+
+</head>
+
+<body>
+<?php
+$titleErr = "";
+    //action="../viewcontrollers/uploadquestion.php"
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $title = $_POST['quetitle'];
+    if(strlen($title) == 0){
+        $titleErr = "<br><font color='#FF0000'>请输入概述</font><br/>";
+    }
+    else if(strlen($title) >= 150){
+        $titleErr = "<font color='#FF0000'>您输入的概述太长</font><br/>";
+    }
+    else{
+        
+        //header("Location: http://www.baidu.com");   
+        //确保重定向后，后续代码不会被执行   
+        
+        //exit;
+        require_once("../viewcontrollers/uploadquestion.php");
+        $arr = array(
+            'title' => $title,
+            'quetext' => $_POST['content'],
+            'grade' => $_POST['select2'],
+            'subject' => $_POST['select']);
+        uploadquestion($arr);
+        echo "ok";
+    }
+}
+?>
+<form id="form1" name="form1"  enctype="multipart/form-data" method="post">
+    <label>问题概述:<br />
+    <p>
+      <textarea name="quetitle" cols="100" rows="3"></textarea>
+       <?php echo $titleErr;?>
+    </p>
+    <br />
+    科目：
+    <select name="select">
+      <option>数学</option>
+      <option>英语</option>
+      <option>语文</option>
+      <option>物理</option>
+      <option>化学</option>
+    </select>
+  </label>
+    <label>   年级:
+    <select name="select2">
+      <option>初一</option>
+      <option>初二</option>
+      <option>初三</option>
+    </select>
+    </label>
+  </p>
+  <p>问题详述:</p>
+  <p>
+    <label>
+    <textarea id='editor' name="content" style="width:727px;height:225px;"> </textarea> 
+    </label>
+</p>
+  <label>
+    <input type="submit" name="Submit" value="提交"/>
+    
+  </label>
+    <br />
+  </p>
+</form>
+<p>&nbsp;</p>
+</body>
+</html>
